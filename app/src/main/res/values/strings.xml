@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">LessonMemoryGame</string>
+    <string name="app_name1">MemoryGame</string>
+    <string name="easy">easy</string>
+    <string name="medium">medium</string>
+    <string name="hard">hard</string>
+</resources>

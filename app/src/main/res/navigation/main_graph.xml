@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_graph.xml"
+    app:startDestination="@id/splashScreen">
+
+    <fragment
+        tools:layout="@layout/screen_splash"
+        android:id="@+id/splashScreen"
+        android:name="uz.xsoft.lessonmemorygame.presentation.ui.screens.SplashScreen"
+        android:label="SplashScreen" >
+        <action
+            android:id="@+id/action_splashScreen_to_levelScreen"
+            app:destination="@id/levelScreen"
+            app:popUpTo="@id/splashScreen"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        tools:layout="@layout/screen_level"
+        android:id="@+id/levelScreen"
+        android:name="uz.xsoft.lessonmemorygame.presentation.ui.screens.LevelScreen"
+        android:label="LevelScreen" >
+        <action
+            android:id="@+id/action_levelScreen_to_gameScreen"
+            app:destination="@id/gameScreen" />
+    </fragment>
+    <fragment
+        tools:layout="@layout/screen_game"
+        android:id="@+id/gameScreen"
+        android:name="uz.xsoft.lessonmemorygame.presentation.ui.screens.GameScreen"
+        android:label="GameScreen" >
+        <argument
+            android:name="level"
+            app:argType="uz.xsoft.lessonmemorygame.data.models.Level" />
+    </fragment>
+</navigation>
