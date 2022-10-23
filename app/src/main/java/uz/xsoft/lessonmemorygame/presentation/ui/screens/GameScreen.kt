@@ -41,6 +41,8 @@ class GameScreen : Fragment(R.layout.screen_game) {
     private lateinit var images: ArrayList<ImageView>
     private val args: GameScreenArgs by navArgs()
 
+    private var isAnimationOver = false
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         args.level.apply {
             level = this
@@ -51,7 +53,7 @@ class GameScreen : Fragment(R.layout.screen_game) {
         Log.d("TTT", " Container ${viewBinding.containerMain.width}")
         viewBinding.containerMain.post {
             _width = viewBinding.containerMain.width / (level.x + 1)
-            _height = viewBinding.containerMain.height / (level.y + 1) - 100
+            _height = viewBinding.containerMain.height / (level.y + 1) - 130
 
             Log.d("TTT", "result ${viewBinding.containerMain.width} $_width $_height")
             viewBinding.containerImage.layoutParams.apply {
@@ -68,28 +70,45 @@ class GameScreen : Fragment(R.layout.screen_game) {
     }
 
     fun loadImages() {
-        Log.d("TTT", "loadImages $_width $_height")
+
 
         for (x in 0 until level.x) {
             for (y in 0 until level.y) {
                 val imageView = ImageView(requireContext())
+                val imageViewBg = ImageView(requireContext())
+
                 viewBinding.containerImage.addView(imageView)
+                viewBinding.containerImage.addView(imageViewBg)
                 val lp = imageView.layoutParams as RelativeLayout.LayoutParams
+                val lpBg = imageViewBg.layoutParams as RelativeLayout.LayoutParams
 
                 lp.apply {
                     width = _width
                     height = _height
                 }
 
+                lpBg.apply {
+                    width = _width
+                    height = _height
+                }
 
                 imageView.x = x * lp.width * 1f
                 imageView.y = y * lp.height * 1f
                 lp.setMargins(1, 1, 1, 1)
-                imageView.setPadding(6)
+                lp.setMargins(1, 1, 1, 1)
+                imageView.setPadding(12)
                 imageView.scaleType = ImageView.ScaleType.FIT_XY
                 imageView.layoutParams = lp
-                imageView.setImageResource(R.drawable.item_back)
+                imageView.setImageResource(R.drawable.question_mark)
                 images.add(imageView)
+
+                imageViewBg.x = x * lp.width * 1f
+                imageViewBg.y = y * lp.height * 1f
+                lpBg.setMargins(1, 1, 1, 1)
+                imageViewBg.setPadding(6)
+                imageViewBg.scaleType = ImageView.ScaleType.FIT_XY
+                imageViewBg.layoutParams = lp
+                imageViewBg.setImageResource(R.drawable.a_panel_96x96)
 
             }
         }
@@ -112,17 +131,12 @@ class GameScreen : Fragment(R.layout.screen_game) {
 
 
 
-
-
-
-
-
-
                 imageView.setOnClickListener {
 
 
-                    if (imageList.size < 2 && it.rotationY == 0f) {
+                    if (imageList.size < 2 && isAnimationOver) {
 
+                        Log.d("TTT", "Ishlab ketdi")
 
                         imageView.isClickable = false
                         openView(imageView)
@@ -184,7 +198,10 @@ class GameScreen : Fragment(R.layout.screen_game) {
                 delay(koef)
                 closeView(imageView)
                 imageView.isClickable = true
+
             }
+            delay(50)
+            isAnimationOver = true
         }
 
     }
@@ -215,49 +232,55 @@ class GameScreen : Fragment(R.layout.screen_game) {
 
     private fun closeView(imageView: ImageView) {
         imageView.animate()
-            .setDuration(100)
-            .rotationY(90f)
+            .setDuration(50)
+            .scaleXBy(-.5f)
+            .scaleYBy(-.5f)
+            //.rotationY(90f)
             .withEndAction {
-                imageView.setImageResource(R.drawable.item_back)
+                imageView.setImageResource(R.drawable.question_mark)
                 imageView.animate()
                     .setDuration(100)
-                    .rotationY(0f)
+                    .scaleXBy(.5f)
+                    .scaleYBy(.5f)
+                    .setInterpolator(DecelerateInterpolator())
+                    //.rotationY(0f)
                     .withEndAction {
-
                     }
                     .start()
             }
-            .start()
+           .start()
 
     }
 
     private fun openView(imageView: ImageView) {
         imageView.bringToFront()
         imageView.animate()
-            .setDuration(100)
-            .scaleXBy(.5f)
-            .scaleYBy(.5f)
+            .setDuration(50)
+            .scaleXBy(-.5f)
+            .scaleYBy(-.5f)
             .withEndAction {
                 imageView.animate()
-                    .setDuration(100)
-                    .rotationY(90f)
-                    .withEndAction {
+//                    .setDuration(100)
+//                    .rotationY(90f)
+//                    .withEndAction {
                         imageView.setImageResource((imageView.tag as GameModel).image)
-                        imageView.animate()
-                            .setDuration(100)
-                            .rotationY(180f)
-
-                            .withEndAction {
+//                        imageView.animate()
+//                            .setDuration(100)
+//                            .rotationY(180f)
+//
+//                            .withEndAction {
                                 imageView.animate()
                                     .setDuration(100)
-                                    .scaleXBy(-.5f)
-                                    .scaleYBy(-.5f)
+                                    .scaleXBy(.5f)
+                                    .scaleYBy(.5f)
                                     .setInterpolator(DecelerateInterpolator())
+                                    .withEndAction{
+                                    }
                                     .start()
-                            }
-                            .start()
-                    }
-                    .start()
+ //                           }
+//                            .start()
+//                    }
+//                    .start()
             }
 
             .start()
