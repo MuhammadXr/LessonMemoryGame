@@ -8,7 +8,7 @@
     <fragment
         tools:layout="@layout/screen_splash"
         android:id="@+id/splashScreen"
-        android:name="uz.xsoft.lessonmemorygame.presentation.ui.screens.SplashScreen"
+        android:name="uz.gita.memorygame_xr.presentation.ui.screens.SplashScreen"
         android:label="SplashScreen" >
         <action
             android:id="@+id/action_splashScreen_to_levelScreen"
@@ -19,19 +19,35 @@
     <fragment
         tools:layout="@layout/screen_level"
         android:id="@+id/levelScreen"
-        android:name="uz.xsoft.lessonmemorygame.presentation.ui.screens.LevelScreen"
+        android:name="uz.gita.memorygame_xr.presentation.ui.screens.LevelScreen"
         android:label="LevelScreen" >
         <action
             android:id="@+id/action_levelScreen_to_gameScreen"
             app:destination="@id/gameScreen" />
+        <action
+            android:id="@+id/action_levelScreen_to_aboutScreen"
+            app:destination="@id/aboutScreen" />
+        <action
+            android:id="@+id/action_levelScreen_to_recordsScreen"
+            app:destination="@id/recordsScreen" />
     </fragment>
     <fragment
         tools:layout="@layout/screen_game"
         android:id="@+id/gameScreen"
-        android:name="uz.xsoft.lessonmemorygame.presentation.ui.screens.GameScreen"
+        android:name="uz.gita.memorygame_xr.presentation.ui.screens.GameScreen"
         android:label="GameScreen" >
         <argument
             android:name="level"
-            app:argType="uz.xsoft.lessonmemorygame.data.models.Level" />
+            app:argType="uz.gita.memorygame_xr.data.models.Level" />
     </fragment>
+    <fragment
+        android:id="@+id/aboutScreen"
+        android:name="uz.gita.memorygame_xr.presentation.ui.screens.AboutScreen"
+        android:label="fragment_about_screen"
+        tools:layout="@layout/fragment_about_screen" />
+    <fragment
+        android:id="@+id/recordsScreen"
+        android:name="uz.gita.memorygame_xr.presentation.ui.screens.RecordsScreen"
+        android:label="fragment_records_screen"
+        tools:layout="@layout/fragment_records_screen" />
 </navigation>

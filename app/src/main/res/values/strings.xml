@@ -1,7 +1,9 @@
 <resources>
-    <string name="app_name">LessonMemoryGame</string>
-    <string name="app_name1">MemoryGame</string>
-    <string name="easy">easy</string>
-    <string name="medium">medium</string>
-    <string name="hard">hard</string>
+    <string name="app_name">Memory Game</string>
+    <string name="app_name1">Memory Game</string>
+    <string name="easy">EASY</string>
+    <string name="medium">MEDIUM</string>
+    <string name="hard">HARD</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
