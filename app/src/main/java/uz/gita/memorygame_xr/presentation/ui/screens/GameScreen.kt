@@ -2,16 +2,27 @@ package uz.gita.memorygame_xr.presentation.ui.screens
 
 
 import android.annotation.SuppressLint
+import android.content.ContentValues.TAG
+import android.content.Context
+import android.content.res.Configuration
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.DisplayMetrics
 import android.util.Log
+import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
+import android.view.Window
+import android.view.WindowManager
 import android.view.animation.DecelerateInterpolator
 import android.widget.ImageView
 import android.widget.RelativeLayout
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.forEach
 import androidx.core.view.setPadding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -29,6 +40,8 @@ import uz.gita.memorygame_xr.data.models.GameModel
 import uz.gita.memorygame_xr.data.models.Level
 import uz.gita.memorygame_xr.databinding.ScreenGameBinding
 import uz.gita.memorygame_xr.explode_view.ExplosionField
+import uz.gita.memorygame_xr.presentation.ui.dialogs.PauseDialog
+import uz.gita.memorygame_xr.presentation.ui.dialogs.WinDialog
 import uz.gita.memorygame_xr.presentation.viewmodel.GameViewModel
 import uz.gita.memorygame_xr.presentation.viewmodel.impl.GameViewModelImpl
 import java.util.*
@@ -47,20 +60,32 @@ class GameScreen : Fragment(R.layout.screen_game) {
     private lateinit var images: ArrayList<ImageView>
     private val args: GameScreenArgs by navArgs()
 
+    //Dialogs
+    private var pauseDialog:PauseDialog? = null
+    private var winDialog: WinDialog? = null
+
     private var isAnimationOver = false
 
 
     private var seconds = 0
-    private var startSeconds = 0
+    private var startSeconds = 0f
+    var bonusAmount = 0
 
     // Is the stopwatch running?
     private var running = false
 
     private var wasRunning = false
 
+
+
+
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
+        pauseDialog = PauseDialog(requireContext())
+        winDialog = WinDialog(requireContext())
+        pauseDialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        winDialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         if (savedInstanceState != null) {
 
@@ -78,14 +103,17 @@ class GameScreen : Fragment(R.layout.screen_game) {
         onClickStart()
 
 
+
         viewBinding.containerImage.bringToFront()
 
+        viewModel.setLevel(args.level)
         args.level.apply {
             level = this
             count = x * y
         }
 
         viewBinding.pauseBtn.setOnTouchListener { view, motionEvent ->
+
             when(motionEvent.action){
                 MotionEvent.ACTION_DOWN -> {
                     viewBinding.pauseBtn.setImageResource(R.drawable.pause_th_clicked)
@@ -93,12 +121,22 @@ class GameScreen : Fragment(R.layout.screen_game) {
                 }
                 MotionEvent.ACTION_UP -> {
                     viewBinding.pauseBtn.setImageResource(R.drawable.pause_th)
+
+                    pauseDialog?.setExitListener {
+                        findNavController().navigateUp()
+                        pauseDialog?.dismiss()
+                    }
+                    pauseDialog?.setResumeListener {
+                        pauseDialog?.dismiss()
+                    }
+                    pauseDialog?.show()
                     true
                 }
                 else -> {
                     false
                 }
             }
+
         }
 
         images = ArrayList(count)
@@ -119,6 +157,7 @@ class GameScreen : Fragment(R.layout.screen_game) {
         viewModel.gameModeLiveData.observe(viewLifecycleOwner, gameDataObserver)
         viewModel.counter.observe(viewLifecycleOwner, finishObserver)
         viewModel.score.observe(viewLifecycleOwner, scoreObserver)
+
 
     }
 
@@ -192,29 +231,40 @@ class GameScreen : Fragment(R.layout.screen_game) {
 
                         Log.d("TTT", "Ishlab ketdi")
 
+                        if (imageList.isEmpty())
+                            startSeconds = seconds.toFloat()
                         imageView.isClickable = false
                         openView(imageView)
                         imageList.add(imageView)
 
-                        startSeconds = seconds
+
 
                         if (imageList.first().tag == imageView.tag && imageList.size == 2) {
 
+
+                            bonusAmount = (55f *(1 / (if((seconds-startSeconds) <= 0.05f) 1f else seconds - startSeconds)) ).toInt()
+                            Log.d("TTT","$startSeconds  $seconds  ")
+                            viewModel.setScore(bonusAmount*2)
                             viewModel.incr()
                             viewModel.incr()
                             lifecycleScope.launch(Dispatchers.Main) {
 
-                                delay(1000)
+
+
 
 //                            imageView.setColorFilter(Color.GREEN)
 //                            imageList.first().setColorFilter(Color.GREEN)
+
+                                delay(1000)
                                 explodeView(imageList.first())
                                 explodeView(imageView)
+
+
 
                                 imageList.first().visibility = ImageView.INVISIBLE
                                 imageView.visibility = ImageView.INVISIBLE
 
-                                viewModel.setScore(55)
+
 
                                 imageList.clear()
 
@@ -266,24 +316,28 @@ class GameScreen : Fragment(R.layout.screen_game) {
 
 
     private val finishObserver = Observer<Int> {
-        Log.d("TTT", " $it  == $count")
+
         if (it >= count) {
-            val dialog =
-                AlertDialog.Builder(requireContext()).setMessage("You win! restart or Quit?")
-                    .setNegativeButton(
-                        "QUIT"
-                    ) { p0, p1 ->
-                        findNavController().navigateUp()
-                    }.setPositiveButton("RESTART") { p0, p1 ->
 
-                        images.clear()
-                        viewBinding.containerImage.removeAllViews()
-                        loadImages()
-                        viewModel.getDataByLevel(level)
-                        viewModel.decr()
+            viewModel.saveScoreAndTime(viewBinding.timeText.text.toString(),viewModel.score.value!!)
 
-                    }.setCancelable(false).create()
-            dialog.show()
+            winDialog?.setExitListener {
+                findNavController().navigateUp()
+                winDialog?.dismiss()
+            }
+            winDialog?.setReplayListener {
+                images.clear()
+                viewBinding.containerImage.removeAllViews()
+                loadImages()
+                viewModel.getDataByLevel(level)
+                viewModel.decr()
+                winDialog?.dismiss()
+                seconds = 0
+
+            }
+            winDialog?.setCancelable(false)
+
+            winDialog?.show()
         }
     }
 
@@ -387,13 +441,16 @@ class GameScreen : Fragment(R.layout.screen_game) {
         val imageViewOk = ImageView(requireContext())
         imageViewOk.x = imageView.x
         imageViewOk.y = imageView.y
-
+        val bonusText = TextView(requireContext())
+        bonusText.x = imageView.x
+        bonusText.y = imageView.y
 
         exp.explode(imageView)
 
 
 
         viewBinding.containerImage.addView(imageViewOk)
+        viewBinding.containerImage.addView(bonusText)
 
 
         lp.apply {
@@ -408,6 +465,14 @@ class GameScreen : Fragment(R.layout.screen_game) {
         imageViewOk.layoutParams = lp
         imageViewOk.setImageResource(R.drawable.ok)
 
+
+        bonusText.layoutParams = lp
+        bonusText.text = bonusAmount.toString()
+        bonusText.setTextColor(Color.YELLOW)
+        bonusText.textAlignment = TextView.TEXT_ALIGNMENT_CENTER
+        bonusText.gravity = Gravity.CENTER
+
+        showBonus(bonusText)
         appearView(imageViewOk)
 
     }
@@ -432,6 +497,29 @@ class GameScreen : Fragment(R.layout.screen_game) {
             .start()
 
     }
+
+    private fun showBonus(view: View){
+        view.animate()
+            .setDuration(1000)
+            .scaleXBy(5f)
+            .scaleYBy(5f)
+            .alpha(0f)
+            //.rotationY(90f)
+            .withEndAction {
+//                view.animate()
+//                    .setDuration(200)
+//                    .scaleXBy(.5f)
+//                    .scaleYBy(.5f)
+//                    .alphaBy(.1f)
+//                    .setInterpolator(DecelerateInterpolator())
+//                    //.rotationY(0f)
+//                    .withEndAction {
+//                    }
+//                    .start()
+            }
+            .start()
+    }
+
 
 
     // Save the state of the stopwatch

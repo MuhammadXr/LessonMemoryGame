@@ -1,6 +1,7 @@
 package uz.gita.memorygame_xr.presentation.ui.screens
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.View
 import androidx.fragment.app.viewModels
@@ -30,54 +31,45 @@ class RecordsScreen : Fragment(R.layout.fragment_records_screen) {
             findNavController().navigateUp()
         }
 
+        fetchScores()
 
-        val scoreEasyList = ArrayList<Int>()
-        scoreEasyList.apply {
-            if (viewModel.easyScore.isNotEmpty())
-            viewModel.easyScore.split('#').forEach{
-                this.add(it.toInt())
-            }
-            else
-                scoreEasyList.addAll(listOf(0,0,0))
-        }
+        fetchTimes()
 
-        scoreEasyList.sortDescending()
+    }
 
-        viewBinding.bonusEasyText1.text = scoreEasyList.first().toString()
-        viewBinding.bonusEasyText2.text = scoreEasyList[1].toString()
-        viewBinding.bonusEasyText3.text = scoreEasyList.last().toString()
+    private fun fetchScores(){
 
-        val scoreMediumList = ArrayList<Int>()
-        scoreMediumList.apply {
-            if (viewModel.mediumScore.isNotEmpty())
-            viewModel.mediumScore.split('#').forEach{
-                this.add(it.toInt())
-            }
-            else
-                scoreMediumList.addAll(listOf(0,0,0))
-        }
-
-        scoreMediumList.sortDescending()
-
-        viewBinding.bonusMediumText1.text = scoreMediumList.first().toString()
-        viewBinding.bonusMediumText2.text = scoreMediumList[1].toString()
-        viewBinding.bonusMediumText3.text = scoreMediumList.last().toString()
+        viewBinding.bonusEasyText1.text = viewModel.sharedPref.easy1.split("#").first()
+        viewBinding.bonusEasyText2.text = viewModel.sharedPref.easy2.split("#").first()
+        viewBinding.bonusEasyText3.text = viewModel.sharedPref.easy3.split("#").first()
 
 
-        val scoreHardList = ArrayList<Int>()
-        scoreHardList.apply {
-            if (viewModel.hardScore.isNotEmpty())
-            viewModel.hardScore.split('#').forEach{
-                this.add(it.toInt())
-            }
-            else
-                scoreHardList.addAll(listOf(0,0,0))
-        }
+        viewBinding.bonusMediumText1.text = viewModel.sharedPref.medium1.split("#").first()
+        viewBinding.bonusMediumText2.text = viewModel.sharedPref.medium2.split("#").first()
+        viewBinding.bonusMediumText3.text = viewModel.sharedPref.medium3.split("#").first()
 
-        scoreHardList.sortDescending()
 
-        viewBinding.bonusHardText1.text = scoreHardList.first().toString()
-        viewBinding.bonusHardText2.text = scoreHardList[1].toString()
-        viewBinding.bonusHardText3.text = scoreHardList.last().toString()
+
+        viewBinding.bonusHardText1.text = viewModel.sharedPref.hard1.split("#").first()
+        viewBinding.bonusHardText2.text = viewModel.sharedPref.hard2.split("#").first()
+        viewBinding.bonusHardText3.text = viewModel.sharedPref.hard3.split("#").first()
+    }
+
+    private fun fetchTimes(){
+
+        viewBinding.timeEastText1.text = viewModel.sharedPref.easy1.split("#")[1]
+        viewBinding.timeEasyText2.text = viewModel.sharedPref.easy2.split("#")[1]
+        viewBinding.timeEastText3.text = viewModel.sharedPref.easy3.split("#")[1]
+
+
+        viewBinding.timeMediumText1.text = viewModel.sharedPref.medium1.split("#")[1]
+        viewBinding.timeMediumText2.text = viewModel.sharedPref.medium2.split("#")[1]
+        viewBinding.timeMediumText3.text = viewModel.sharedPref.medium3.split("#")[1]
+
+
+
+        viewBinding.timeHardText1.text = viewModel.sharedPref.hard1.split("#")[1]
+        viewBinding.timeHardText2.text = viewModel.sharedPref.hard2.split("#")[1]
+        viewBinding.timeHardText3.text = viewModel.sharedPref.hard3.split("#")[1]
     }
 }

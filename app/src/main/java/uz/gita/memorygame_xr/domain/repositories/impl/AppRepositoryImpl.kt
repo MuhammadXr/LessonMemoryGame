@@ -1,5 +1,6 @@
 package uz.gita.memorygame_xr.domain.repositories.impl
 
+import android.util.Log
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import uz.gita.memorygame_xr.R
@@ -50,111 +51,63 @@ class AppRepositoryImpl @Inject constructor(val sharedPref: MySharedPref) : AppR
         emit(data.subList(0, count / 2))
     }
 
-    override fun saveScoresByLevel(level: Level, time: Long, score: Int) {
+    override fun saveScoresByLevel(level: Level, time: String, score: Int) {
+
+        Log.d("TTT", "REPOSITORY $time")
+
         when (level.x) {
 
             3 -> {
-                val list = sharedPref.scoreEasy.split('#')
-                val parseList = ArrayList<Int>()
-                list.forEach {
-                    if (it.isNotEmpty()) {
-                        parseList.add(it.toInt())
-                    }
+
+                val one = sharedPref.easy1.split('#').first().toInt()
+                val two = sharedPref.easy2.split('#').first().toInt()
+                val three = sharedPref.easy3.split('#').first().toInt()
+
+
+                if (score>one){
+                    sharedPref.easy1 = "$score#$time"
                 }
-                parseList.add(score)
-                parseList.sort()
-
-                sharedPref.scoreEasy = parseList.subList(0,2).joinToString ("#")
-
-                val listTime = sharedPref.timeEasy.split("#")
-                val parseListTime = ArrayList<Long>()
-                listTime.forEach {
-                    if (it.isNotEmpty()) {
-                        parseListTime.add(it.toLong())
-                    }
+                else if (score>two){
+                    sharedPref.easy2 = "$score#$time"
                 }
-                parseListTime.add(time)
-                parseListTime.sort()
-
-                sharedPref.timeEasy = parseList.subList(0,2).joinToString ("#")
-
+                else if (score>three){
+                    sharedPref.easy3 = "$score#$time"
+                }
             }
             4 -> {
-                val list = sharedPref.scoreMedium.split('#')
-                val parseList = ArrayList<Int>()
-                list.forEach {
-                    if (it.isNotEmpty()) {
-                        parseList.add(it.toInt())
-                    }
+                val one = sharedPref.medium1.split('#').first().toInt()
+                val two = sharedPref.medium2.split('#').first().toInt()
+                val three = sharedPref.medium3.split('#').first().toInt()
+
+
+                if (score>one){
+                    sharedPref.medium1 = "$score#$time"
                 }
-                parseList.add(score)
-                parseList.sort()
-
-                sharedPref.scoreMedium = parseList.subList(0,2).joinToString ("#")
-
-                val listTime = sharedPref.timeMedium.split("#")
-                val parseListTime = ArrayList<Long>()
-                listTime.forEach {
-                    if (it.isNotEmpty()) {
-                        parseListTime.add(it.toLong())
-                    }
+                else if (score>two){
+                    sharedPref.medium2 = "$score#$time"
                 }
-                parseListTime.add(time)
-                parseListTime.sort()
-
-                sharedPref.timeMedium = parseList.subList(0,2).joinToString ("#")
+                else if (score>three){
+                    sharedPref.medium3 = "$score#$time"
+                }
             }
+
             5 -> {
-                val list = sharedPref.scoreHard.split('#')
-                val parseList = ArrayList<Int>()
-                list.forEach {
-                    if (it.isNotEmpty()) {
-                        parseList.add(it.toInt())
-                    }
+                val one = sharedPref.hard1.split('#').first().toInt()
+                val two = sharedPref.hard2.split('#').first().toInt()
+                val three = sharedPref.hard3.split('#').first().toInt()
+
+
+                if (score>one){
+                    sharedPref.hard1 = "$score#$time"
                 }
-                parseList.add(score)
-                parseList.sort()
-
-                sharedPref.scoreHard = parseList.subList(0,2).joinToString ("#")
-
-                val listTime = sharedPref.timeHard.split("#")
-                val parseListTime = ArrayList<Long>()
-                listTime.forEach {
-                    if (it.isNotEmpty()) {
-                        parseListTime.add(it.toLong())
-                    }
+                else if (score>two){
+                    sharedPref.hard2 = "$score#$time"
                 }
-                parseListTime.add(time)
-                parseListTime.sort()
-
-                sharedPref.timeHard = parseList.subList(0,2).joinToString ("#")
+                else if (score>three){
+                    sharedPref.hard3 = "$score#$time"
+                }
             }
         }
     }
-
-    override fun getEasyTime(): String {
-        return sharedPref.timeEasy
-    }
-
-    override fun getEasyScore(): String {
-        return sharedPref.scoreEasy
-    }
-
-    override fun getMediumTime(): String {
-       return sharedPref.timeMedium
-    }
-
-    override fun getMediumScore(): String {
-        return sharedPref.scoreMedium
-    }
-
-    override fun getHardTime(): String {
-        return sharedPref.timeHard
-    }
-
-    override fun getHardScore(): String {
-        return sharedPref.scoreHard
-    }
-
 
 }

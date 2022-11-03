@@ -8,5 +8,5 @@ interface GameUseCase {
 
     fun getDataByLevel(level: Level): Flow<List<GameModel>>
 
-    fun saveScores(level: Level, time: Long, score:Int)
+    fun saveScores(level: Level, time: String, score:Int)
 }

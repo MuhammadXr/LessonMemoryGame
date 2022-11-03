@@ -1,16 +1,8 @@
 package uz.gita.memorygame_xr.presentation.viewmodel
 
 import androidx.lifecycle.LiveData
+import uz.gita.memorygame_xr.data.MySharedPref
 
 interface ScoreViewModel {
-
-    val easyTime: String
-    val easyScore: String
-
-    val mediumTime: String
-    val mediumScore: String
-
-    val hardTime: String
-    val hardScore: String
-
+    val sharedPref: MySharedPref
 }

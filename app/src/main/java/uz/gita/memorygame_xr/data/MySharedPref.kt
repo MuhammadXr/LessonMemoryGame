@@ -11,12 +11,33 @@ class MySharedPref @Inject constructor(
     private val sharedPreferences: SharedPreferences
 ) : SharedPreference(ctx, sharedPreferences) {
 
-    var scoreEasy:String by Strings()
-    var scoreMedium:String by Strings()
-    var scoreHard:String by Strings()
+    var easy1:String by Strings()
+    var easy2:String by Strings()
+    var easy3:String by Strings()
+    var medium1:String by Strings()
+    var medium2:String by Strings()
+    var medium3:String by Strings()
+    var hard1:String by Strings()
+    var hard2:String by Strings()
+    var hard3:String by Strings()
 
-    var timeEasy: String by Strings()
-    var timeMedium: String by Strings()
-    var timeHard: String by Strings()
+    var isFirst: Boolean by Booleans()
 
+    init {
+        if (!isFirst){
+            easy1 = "0#0"
+            easy2 = "0#0"
+            easy3 = "0#0"
+
+            medium1 = "0#0"
+            medium2 = "0#0"
+            medium3 = "0#0"
+
+            hard1 = "0#0"
+            hard2 = "0#0"
+            hard3 = "0#0"
+
+            isFirst = true
+        }
+    }
 }

@@ -26,7 +26,7 @@ class GameUseCaseImpl @Inject constructor(private val appRepository: AppReposito
     }
         .flowOn(Dispatchers.Default)
 
-    override fun saveScores(level: Level, time: Long, score: Int) {
+    override fun saveScores(level: Level, time: String, score: Int) {
         appRepository.saveScoresByLevel(level, time, score)
     }
 }

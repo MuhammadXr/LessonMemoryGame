@@ -24,7 +24,8 @@ interface GameViewModel {
 
     fun decr()
 
-    fun saveScoreAndTime(time: Long, score:Int)
+    fun saveScoreAndTime(time: String, score:Int)
 
     fun setScore(score: Int)
+    fun setLevel(level: Level)
 }

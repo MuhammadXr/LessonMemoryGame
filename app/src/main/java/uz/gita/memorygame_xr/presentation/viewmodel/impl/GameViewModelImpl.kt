@@ -41,9 +41,10 @@ class GameViewModelImpl @Inject constructor(private val useCase: GameUseCase) : 
 
     override fun decr() {
         counter.value = 0
+        score.value = 0
     }
 
-    override fun saveScoreAndTime(time: Long, score: Int) {
+    override fun saveScoreAndTime(time: String, score: Int) {
         useCase.saveScores(level = level.value!!, time,score)
     }
 
@@ -51,6 +52,8 @@ class GameViewModelImpl @Inject constructor(private val useCase: GameUseCase) : 
         this.score.value = this.score.value!! + earnedScore
     }
 
-
+    override fun setLevel(level: Level){
+        this.level.value = level
+    }
 
 }
